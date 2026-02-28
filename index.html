@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commission Calculator | Track Your $1M</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 16px;
+    }
+    .container { max-width: 500px; margin: 0 auto; }
+    
+    h1 { 
+      text-align: center; 
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+    .subtitle { 
+      text-align: center; 
+      color: #888; 
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .big-number {
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #2d3748, #1a202c);
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+    .big-label {
+      font-size: 0.8rem;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .big-value {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f6ad55, #ed8936);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .big-sub {
+      font-size: 0.9rem;
+      color: #68d391;
+      margin-top: 8px;
+    }
+    
+    .progress-container {
+      background: #2d3748;
+      border-radius: 12px;
+      height: 24px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #48bb78, #68d391);
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+    
+    .card {
+      background: #1e2a4a;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    .input-group {
+      margin-bottom: 16px;
+    }
+    .input-label {
+      display: block;
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid #2d3748;
+      background: #232b3a;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .input-field:focus { outline: none; border-color: #4fd1c5; }
+    
+    .commission-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .commission-box {
+      background: #232b3a;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .commission-rate {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .commission-earn {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #4fd1c5;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-primary {
+      background: #48bb78;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #2d3748;
+      color: #fff;
+    }
+    
+    .sale-list {
+      background: #1a202c;
+      border-radius: 12px;
+      padding: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .sale-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #2d3748;
+      font-size: 0.9rem;
+    }
+    .sale-amount { color: #4fd1c5; }
+    .sale-comm { color: #f6ad55; font-weight: 600; }
+    
+    .motivation {
+      text-align: center;
+      padding: 16px;
+      background: linear-gradient(135deg, #2d3748, #1a202c);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    .motivation-text {
+      font-size: 1rem;
+      color: #fff;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Commission Calculator</h1>
+    <p class="subtitle">Track your path to $1M</p>
+    
+    <div class="big-number">
+      <div class="big-label">Your Commission</div>
+      <div class="big-value">$<span id="totalCommission">0</span></div>
+      <div class="big-sub">toward $1,000,000 goal</div>
+    </div>
+    
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    </div>
+    <div class="progress-text"><span id="percentComplete">0</span>% of $1M goal</div>
+    
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label">Mattress Sale Amount</label>
+        <input type="number" class="input-field" id="saleAmount" placeholder="1500">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Add-ons (base, protection, etc.)</label>
+        <input type="number" class="input-field" id="addonAmount" placeholder="300">
+      </div>
+      
+      <div class="commission-grid">
+        <div class="commission-box">
+          <div class="commission-rate">Mattress (5%)</div>
+          <div class="commission-earn">$<span id="mattressComm">0</span></div>
+        </div>
+        <div class="commission-box">
+          <div class="commission-rate">Add-ons (10%)</div>
+          <div class="commission-earn">$<span id="addonComm">0</span></div>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="addSale()">+ Add Sale & Commission</button>
+      <button class="btn btn-secondary" onclick="undoLast()">↩ Undo Last</button>
+    </div>
+    
+    <div class="card">
+      <div class="input-label" style="margin-bottom: 12px;">Today's Commissions</div>
+      <div class="sale-list" id="saleList">
+        <div style="text-align: center; color: #666; padding: 20px;">No sales yet. Let's close some! 🚀</div>
+      </div>
+    </div>
+    
+    <div class="motivation" id="motivationBox" style="display: none;">
+      <div class="motivation-text" id="motivationText"></div>
+    </div>
+  </div>
+
+  <script>
+    const GOAL = 1000000;
+    let sales = JSON.parse(localStorage.getItem('commissionSales') || '[]');
+    let totalCommission = parseFloat(localStorage.getItem('totalCommission') || '0');
+    
+    const motivations = [
+      "🔥 Every sale gets you closer to $1M!",
+      "💪 You're building your empire, one mattress at a time!",
+      "🎯 That commission just bought you closer to financial freedom!",
+      "⚡ Keep crushing it — district #1 is calling your name!",
+      "🏆 Champions are made one close at a time!",
+      "💎 High ticket, high commission, high life!",
+      "🚀 $1M isn't a dream, it's a countdown!"
+    ];
+    
+    function updateDisplay() {
+      document.getElementById('totalCommission').textContent = totalCommission.toLocaleString();
+      const percent = (totalCommission / GOAL * 100).toFixed(2);
+      document.getElementById('percentComplete').textContent = percent;
+      document.getElementById('progressBar').style.width = Math.min(percent, 100) + '%';
+      
+      // Live calculation preview
+      const sale = parseFloat(document.getElementById('saleAmount').value) || 0;
+      const addon = parseFloat(document.getElementById('addonAmount').value) || 0;
+      document.getElementById('mattressComm').textContent = Math.round(sale * 0.05).toLocaleString();
+      document.getElementById('addonComm').textContent = Math.round(addon * 0.10).toLocaleString();
+      
+      // Sale list
+      const listEl = document.getElementById('saleList');
+      if (sales.length === 0) {
+        listEl.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No sales yet. Let\'s close some! 🚀</div>';
+      } else {
+        listEl.innerHTML = sales.slice().reverse().map(s => `
+          <div class="sale-item">
+            <span>Sale: $<span class="sale-amount">${s.sale.toLocaleString()}</span></span>
+            <span class="sale-comm">+$${s.commission}</span>
+          </div>
+        `).join('');
+      }
+      
+      // Motivation
+      if (sales.length > 0) {
+        document.getElementById('motivationBox').style.display = 'block';
+        document.getElementById('motivationText').textContent = motivations[Math.floor(Math.random() * motivations.length)];
+      }
+    }
+    
+    function addSale() {
+      const sale = parseFloat(document.getElementById('saleAmount').value) || 0;
+      const addon = parseFloat(document.getElementById('addonAmount').value) || 0;
+      
+      if (sale > 0) {
+        const commission = Math.round(sale * 0.05 + addon * 0.10);
+        totalCommission += commission;
+        sales.push({ sale, addon, commission, time: new Date().toLocaleTimeString() });
+        
+        localStorage.setItem('commissionSales', JSON.stringify(sales));
+        localStorage.setItem('totalCommission', totalCommission.toString());
+        
+        document.getElementById('saleAmount').value = '';
+        document.getElementById('addonAmount').value = '';
+        updateDisplay();
+      }
+    }
+    
+    function undoLast() {
+      if (sales.length > 0) {
+        const last = sales.pop();
+        totalCommission -= last.commission;
+        localStorage.setItem('commissionSales', JSON.stringify(sales));
+        localStorage.setItem('totalCommission', totalCommission.toString());
+        updateDisplay();
+      }
+    }
+    
+    // Live preview
+    document.getElementById('saleAmount').addEventListener('input', updateDisplay);
+    document.getElementById('addonAmount').addEventListener('input', updateDisplay);
+    
+    // Init
+    updateDisplay();
+  </script>
+</body>
+</html>
