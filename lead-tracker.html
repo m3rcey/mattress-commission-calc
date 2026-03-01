@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Tracker | Sales Pipeline</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; color: #fff; }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 24px; font-size: 0.9rem; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .add-btn { background: #00d4aa; color: #000; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        
+        .pipeline { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; }
+        .stage { flex: 1; min-width: 160px; background: #1e1e2e; border-radius: 12px; padding: 12px; border: 1px solid #333; }
+        .stage h3 { font-size: 0.9rem; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        .stage.new h3 { color: #60a5fa; }
+        .stage.tested h3 { color: #fbbf24; }
+        .stage.negotiating h3 { color: #f97316; }
+        .stage.closed h3 { color: #22c55e; }
+        
+        .lead { background: #252540; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid #444; }
+        .lead:hover { border-color: #00d4aa; }
+        .lead-name { font-weight: 600; font-size: 0.9rem; color: #fff; }
+        .lead-product { font-size: 0.8rem; color: #888; margin: 4px 0; }
+        .lead-value { font-size: 0.85rem; color: #00d4aa; font-weight: 600; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: #1e1e2e; border-radius: 12px; padding: 20px; width: 90%; max-width: 400px; border: 1px solid #444; }
+        .modal h2 { color: #00d4aa; margin-bottom: 16px; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; color: #aaa; margin-bottom: 6px; font-size: 0.85rem; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #252540; color: #fff; }
+        
+        .modal-btns { display: flex; gap: 10px; margin-top: 16px; }
+        .save-btn { flex: 1; background: #00d4aa; color: #000; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .cancel-btn { flex: 1; background: #444; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; }
+        .delete-btn { background: #ff6b6b; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 10px; }
+        
+        .stats { display: flex; gap: 12px; margin-bottom: 16px; }
+        .stat { flex: 1; background: #1e1e2e; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #333; }
+        .stat-num { font-size: 1.4rem; font-weight: 700; color: #00d4aa; }
+        .stat-label { font-size: 0.7rem; color: #888; }
+        
+        .empty { color: #666; font-size: 0.8rem; text-align: center; padding: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Lead Tracker</h1>
+            <button class="add-btn" onclick="openModal()">+ Add Lead</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat"><div class="stat-num" id="total-leads">0</div><div class="stat-label">Total Leads</div></div>
+            <div class="stat"><div class="stat-num" id="pipeline-value">$0</div><div class="stat-label">Pipeline Value</div></div>
+            <div class="stat"><div class="stat-num" id="closed-won">$0</div><div class="stat-label">Closed Won</div></div>
+        </div>
+        
+        <div class="pipeline">
+            <div class="stage new">
+                <h3>🆕 New</h3>
+                <div id="new-leads"></div>
+            </div>
+            <div class="stage tested">
+                <h3>🛏️ Tested</h3>
+                <div id="tested-leads"></div>
+            </div>
+            <div class="stage negotiating">
+                <h3>💰 Negotiating</h3>
+                <div id="negotiating-leads"></div>
+            </div>
+            <div class="stage closed">
+                <h3>✅ Closed</h3>
+                <div id="closed-leads"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="lead-modal">
+        <div class="modal-content">
+            <h2 id="modal-title">Add New Lead</h2>
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="lead-name" placeholder="John Smith">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="lead-phone" placeholder="(555) 123-4567">
+            </div>
+            <div class="form-group">
+                <label>Interested Mattress</label>
+                <input type="text" id="lead-product" placeholder="Serta iComfort CF 3000">
+            </div>
+            <div class="form-group">
+                <label>Est. Value ($)</label>
+                <input type="number" id="lead-value" placeholder="1500">
+            </div>
+            <div class="form-group">
+                <label>Stage</label>
+                <select id="lead-stage">
+                    <option value="new">🆕 New</option>
+                    <option value="tested">🛏️ Tested</option>
+                    <option value="negotiating">💰 Negotiating</option>
+                    <option value="closed">✅ Closed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <input type="text" id="lead-notes" placeholder="Loved the mattress, needs spouse back">
+            </div>
+            <div class="modal-btns">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="save-btn" onclick="saveLead()">Save</button>
+            </div>
+            <button class="delete-btn" id="delete-btn" onclick="deleteLead()" style="display:none;">Delete Lead</button>
+        </div>
+    </div>
+    
+    <script>
+        let leads = JSON.parse(localStorage.getItem('mattress-leads') || '[]');
+        let editingId = null;
+        
+        function saveToStorage() {
+            localStorage.setItem('mattress-leads', JSON.stringify(leads));
+            render();
+        }
+        
+        function render() {
+            document.getElementById('new-leads').innerHTML = '';
+            document.getElementById('tested-leads').innerHTML = '';
+            document.getElementById('negotiating-leads').innerHTML = '';
+            document.getElementById('closed-leads').innerHTML = '';
+            
+            let total = 0;
+            let pipeline = 0;
+            let closed = 0;
+            
+            leads.forEach(lead => {
+                total++;
+                if (lead.stage === 'closed') {
+                    closed += lead.value || 0;
+                } else {
+                    pipeline += lead.value || 0;
+                }
+                
+                const el = document.createElement('div');
+                el.className = 'lead';
+                el.onclick = () => editLead(lead.id);
+                el.innerHTML = `
+                    <div class="lead-name">${lead.name}</div>
+                    <div class="lead-product">${lead.product || 'No product'}</div>
+                    <div class="lead-value">$${lead.value || 0}</div>
+                `;
+                
+                if (lead.stage === 'new') document.getElementById('new-leads').appendChild(el);
+                else if (lead.stage === 'tested') document.getElementById('tested-leads').appendChild(el);
+                else if (lead.stage === 'negotiating') document.getElementById('negotiating-leads').appendChild(el);
+                else document.getElementById('closed-leads').appendChild(el);
+            });
+            
+            ['new-leads', 'tested-leads', 'negotiating-leads', 'closed-leads'].forEach(id => {
+                const container = document.getElementById(id);
+                if (container.children.length === 0) {
+                    container.innerHTML = '<div class="empty">No leads</div>';
+                }
+            });
+            
+            document.getElementById('total-leads').textContent = total;
+            document.getElementById('pipeline-value').textContent = '$' + pipeline.toLocaleString();
+            document.getElementById('closed-won').textContent = '$' + closed.toLocaleString();
+        }
+        
+        function openModal() {
+            editingId = null;
+            document.getElementById('modal-title').textContent = 'Add New Lead';
+            document.getElementById('lead-name').value = '';
+            document.getElementById('lead-phone').value = '';
+            document.getElementById('lead-product').value = '';
+            document.getElementById('lead-value').value = '';
+            document.getElementById('lead-stage').value = 'new';
+            document.getElementById('lead-notes').value = '';
+            document.getElementById('delete-btn').style.display = 'none';
+            document.getElementById('lead-modal').classList.add('show');
+        }
+        
+        function editLead(id) {
+            const lead = leads.find(l => l.id === id);
+            if (!lead) return;
+            
+            editingId = id;
+            document.getElementById('modal-title').textContent = 'Edit Lead';
+            document.getElementById('lead-name').value = lead.name || '';
+            document.getElementById('lead-phone').value = lead.phone || '';
+            document.getElementById('lead-product').value = lead.product || '';
+            document.getElementById('lead-value').value = lead.value || '';
+            document.getElementById('lead-stage').value = lead.stage || 'new';
+            document.getElementById('lead-notes').value = lead.notes || '';
+            document.getElementById('delete-btn').style.display = 'block';
+            document.getElementById('lead-modal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('lead-modal').classList.remove('show');
+        }
+        
+        function saveLead() {
+            const name = document.getElementById('lead-name').value.trim();
+            if (!name) { alert('Name is required'); return; }
+            
+            const lead = {
+                id: editingId || Date.now(),
+                name: name,
+                phone: document.getElementById('lead-phone').value.trim(),
+                product: document.getElementById('lead-product').value.trim(),
+                value: parseInt(document.getElementById('lead-value').value) || 0,
+                stage: document.getElementById('lead-stage').value,
+                notes: document.getElementById('lead-notes').value.trim(),
+                updated: new Date().toISOString()
+            };
+            
+            if (editingId) {
+                const idx = leads.findIndex(l => l.id === editingId);
+                if (idx >= 0) leads[idx] = lead;
+            } else {
+                lead.created = new Date().toISOString();
+                leads.push(lead);
+            }
+            
+            saveToStorage();
+            closeModal();
+        }
+        
+        function deleteLead() {
+            if (!editingId) return;
+            if (!confirm('Delete this lead?')) return;
+            
+            leads = leads.filter(l => l.id !== editingId);
+            saveToStorage();
+            closeModal();
+        }
+        
+        render();
+    </script>
+</body>
+</html>
