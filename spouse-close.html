@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spouse Close Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); }
+    .card-gradient { background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); }
+  </style>
+</head>
+<body class="min-h-screen gradient-bg text-slate-800">
+  <div class="max-w-md mx-auto p-4 min-h-screen">
+    <!-- Header -->
+    <div class="text-center py-6">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold text-white">Spouse Close</h1>
+      <p class="text-blue-200 text-sm mt-1">Send them home with a winning pitch</p>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="card-gradient rounded-2xl p-6 shadow-xl mb-4">
+      <h2 class="font-semibold text-lg mb-4 flex items-center gap-2">
+        <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">1</span>
+        Customer Info
+      </h2>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Customer Name</label>
+          <input type="text" id="customerName" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none" placeholder="What's their name?">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Spouse's Main Concern</label>
+          <select id="spouseConcern" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none">
+            <option value="price">💰 Too expensive</option>
+            <option value="need">🤔 "We don't need a new mattress"</option>
+            <option value="timing">⏰ "Not the right time"</option>
+            <option value="different">🤷 "We like our current one"</option>
+            <option value="brand">🏷️ Prefers a different brand</option>
+            <option value="size">📐 Not sure about size</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Mattress Selected</label>
+          <input type="text" id="mattressName" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none" placeholder="e.g., Tempur-Adapt">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Price</label>
+          <input type="number" id="mattressPrice" class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none" placeholder="1499">
+        </div>
+      </div>
+    </div>
+
+    <!-- Spouse Talking Points -->
+    <div class="card-gradient rounded-2xl p-6 shadow-xl mb-4">
+      <h2 class="font-semibold text-lg mb-4 flex items-center gap-2">
+        <span class="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm">2</span>
+        Talking Points for Spouse
+      </h2>
+      
+      <div id="talkingPoints" class="space-y-3">
+        <div class="bg-purple-50 rounded-xl p-4">
+          <p class="text-sm text-purple-800">Enter customer info to generate personalized talking points 🎯</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Take-Home Sheet -->
+    <div class="card-gradient rounded-2xl p-6 shadow-xl mb-4">
+      <h2 class="font-semibold text-lg mb-3">📄 Take-Home Summary</h2>
+      <p class="text-sm text-slate-500 mb-4">Text/email this to customer after they leave</p>
+      
+      <div class="bg-slate-50 rounded-xl p-4 mb-4">
+        <pre id="takeHomeMsg" class="text-xs text-slate-700 whitespace-pre-wrap font-mono">Enter customer details above...</pre>
+      </div>
+      
+      <button onclick="copyMessage()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+        </svg>
+        Copy Message
+      </button>
+    </div>
+
+    <!-- Close Tips -->
+    <div class="card-gradient rounded-2xl p-6 shadow-xl mb-4">
+      <h2 class="font-semibold text-lg mb-3">💡 Home Close Tips</h2>
+      
+      <div class="space-y-3">
+        <div class="flex gap-3 items-start">
+          <span class="text-2xl">🎁</span>
+          <div>
+            <p class="font-medium text-slate-800">Give them something physical</p>
+            <p class="text-sm text-slate-500">Brochure, business card, or "comparison sheet" they can leave on the fridge</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 items-start">
+          <span class="text-2xl">⏰</span>
+          <div>
+            <p class="font-medium text-slate-800">Create urgency</p>
+            <p class="text-sm text-slate-500">"This price is good until Saturday" or "We have a delivery slot Thursday"</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 items-start">
+          <span class="text-2xl">📱</span>
+          <div>
+            <p class="font-medium text-slate-800">Text YOUR number</p>
+            <p class="text-sm text-slate-500">"Text me your spouse's questions, I'll answer directly"</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 items-start">
+          <span class="text-2xl">💑</span>
+          <div>
+            <p class="font-medium text-slate-800">The "couple close"</p>
+            <p class="text-sm text-slate-500">"Bring them in Saturday — I'll give you both a demo. Free breakfast burritos for the couple who decides together!"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closing Script -->
+    <div class="card-gradient rounded-2xl p-6 shadow-xl">
+      <h2 class="font-semibold text-lg mb-3">💬 Script: At the Door</h2>
+      <div class="bg-green-50 rounded-xl p-4">
+        <p class="text-sm text-green-800 italic" id="closingScript">
+          "Hey <span class="font-semibold">[Name]</span>, I know — this is a big decision you two should make together. Here's what I'd suggest: show [Mattress Name] to [Spouse] and tell them what we talked about — the <span id="scriptBenefit">pressure relief and 10-year warranty</span>. 
+
+Also, here's my number — any questions they have, text me directly. I'll answer fast. 
+
+And this <span id="scriptPrice">$1,499</span> price? It's good until <span id="scriptUrgency">this weekend</span>. See you Saturday?"
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-6">
+      <p class="text-blue-200 text-xs">Built for Josh - #1 Sleep Expert 🚀</p>
+    </div>
+  </div>
+
+  <script>
+    const customerName = document.getElementById('customerName');
+    const spouseConcern = document.getElementById('spouseConcern');
+    const mattressName = document.getElementById('mattressName');
+    const mattressPrice = document.getElementById('mattressPrice');
+    const talkingPointsDiv = document.getElementById('talkingPoints');
+    const takeHomeMsg = document.getElementById('takeHomeMsg');
+
+    const concernPoints = {
+      price: {
+        points: [
+          "💰 <strong>Cost per night:</strong> It's just $X/night — less than a streaming subscription",
+          "💳 <strong>0% Financing:</strong> $X/month for 48 months, no interest",
+          "🛡️ <strong>Price protection:</strong> We match any local competitor for 30 days",
+          "🏥 <strong>Health ROI:</strong> Better sleep = fewer doctor visits, more productivity"
+        ],
+        script: "The price is actually less than you'd pay for a hotel mattress every few years — and this one comes with a 10-year warranty and free delivery."
+      },
+      need: {
+        points: [
+          "😴 <strong>Sleep quality:</strong> You spend 1/3 of your life sleeping — shouldn't it be great?",
+          "😫 <strong>Back pain solution:</strong> The right mattress can eliminate morning stiffness",
+          "💑 <strong>Partner peace:</strong> Motion isolation means you don't feel each other move",
+          "📈 <strong>Energy boost:</strong> Better sleep = better days — worth the investment"
+        ],
+        script: "You don't NEED a better car until your old one breaks down. But wouldn't you rather CHOOSE comfort before you're in pain?"
+      },
+      timing: {
+        points: [
+          "⏰ <strong>Sale ending:</strong> This pricing is good through the weekend",
+          "📅 <strong>Delivery slots:</strong> Thursday and Saturday are filling up fast",
+          "🎁 <strong>Free extras:</strong> Protection plan, pillows, delivery — all included now",
+          "😷 <strong>Health doesn't wait:</strong> Every night of bad sleep affects your health"
+        ],
+        script: "The best time to buy a mattress is when you find the right one. This price, this deal — it won't be here next month."
+      },
+      different: {
+        points: [
+          "🔬 <strong>Technology:</strong> Newer = better pressure relief and cooling",
+          "📊 <strong>Warranty:</strong> Old mattress = 0 coverage, new = 10 years full",
+          "🧪 <strong>Try it 120 nights:</strong> Love it or exchange it — no risk",
+          "♻️ <strong>Old = expensive:</strong> Sagging mattress = paying for poor sleep"
+        ],
+        script: "Your current mattress has done its job, but it's like keeping an old phone — newer models are objectively better."
+      },
+      brand: {
+        points: [
+          "🏪 <strong>We have it:</strong> We stock every brand — we can get whatever you want",
+          "💯 <strong>Price match:</strong> We'll match any authorized dealer nearby",
+          "🛠️ <strong>Service matters:</strong> We deliver, set up, and service what we sell",
+          "⭐ <strong>Reviews:</strong> Check our Google rating — we're #1 in the district"
+        ],
+        script: "I don't care what brand — I care that you sleep great. We have every brand. Let's find the right one for YOUR body."
+      },
+      size: {
+        points: [
+          "📐 <strong>Measure twice:</strong> We have a sizing guide — let's check your room",
+          "🛏️ <strong>Size options:</strong> Queen, King, CA King — we'll find what fits",
+          "👫 <strong>Partner space:</strong> Get the size that gives BOTH of you room",
+          "🚛 <strong>Delivery check:</strong> We'll verify it fits through your doors"
+        ],
+        script: "Let's measure your room right now. Nothing worse than a mattress that doesn't fit. We'll make sure."
+      }
+    };
+
+    function generateContent() {
+      const name = customerName.value || "[Name]";
+      const mattress = mattressName.value || "[Mattress]";
+      const price = parseFloat(mattressPrice.value) || 0;
+      const concern = spouseConcern.value;
+      const data = concernPoints[concern];
+
+      // Generate talking points
+      let pointsHtml = '';
+      if (concern && data) {
+        const perNight = price > 0 ? (price / 365).toFixed(2) : "X";
+        const monthly = price > 0 ? (price / 48).toFixed(2) : "X";
+        
+        const formattedPoints = data.points.map(p => {
+          return p.replace('X', perNight).replace('$X/month', '$' + monthly + '/month');
+        });
+        
+        pointsHtml = formattedPoints.map(p => 
+          `<div class="bg-purple-50 rounded-xl p-3 border-l-4 border-purple-400">
+            <p class="text-sm text-purple-800">${p}</p>
+          </div>`
+        ).join('');
+      }
+      talkingPointsDiv.innerHTML = pointsHtml || '<div class="bg-purple-50 rounded-xl p-4"><p class="text-sm text-purple-800">Enter customer info to generate personalized talking points 🎯</p></div>';
+
+      // Generate take-home message
+      let msg = `Hi ${name}! Great meeting you today. 
+
+As promised, here's a quick summary of what we discussed:
+
+🛏️ MATTRESS: ${mattress}
+💵 PRICE: $${price.toLocaleString()}
+⏰ OFFER VALID: Through this weekend
+
+Your key talking points for [spouse name]:
+${data ? data.script : '• Schedule a demo • Ask about financing • Check our price match'}
+
+Questions? Text me directly — I'm here to help!
+
+See you Saturday 🙌`;
+
+      takeHomeMsg.textContent = msg;
+
+      // Update closing script
+      document.getElementById('scriptBenefit').textContent = concern === 'price' ? 'financing options and price protection' : 
+                                                            concern === 'need' ? 'better sleep and energy' :
+                                                            concern === 'size' ? 'perfect fit guarantee' : 
+                                                            '10-year warranty and free delivery';
+      document.getElementById('scriptPrice').textContent = '$' + price.toLocaleString();
+    }
+
+    function copyMessage() {
+      navigator.clipboard.writeText(takeHomeMsg.textContent);
+      alert('Message copied! Send it to your customer.');
+    }
+
+    // Event listeners
+    [customerName, spouseConcern, mattressName, mattressPrice].forEach(el => {
+      el.addEventListener('input', generateContent);
+    });
+  </script>
+</body>
+</html>
