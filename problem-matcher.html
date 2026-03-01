@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Problem Matcher | Perfect Recommendations</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; color: #fff; }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 24px; font-size: 0.9rem; }
+        
+        .card { background: #1e1e2e; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #333; }
+        .card h2 { color: #00d4aa; margin-bottom: 14px; font-size: 1.1rem; }
+        
+        .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        @media (max-width: 500px) { .problem-grid { grid-template-columns: 1fr; } }
+        
+        .problem-btn { padding: 14px 12px; border: 2px solid #444; border-radius: 10px; background: #252540; color: #ccc; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; text-align: left; }
+        .problem-btn:hover { border-color: #00d4aa; }
+        .problem-btn.selected { border-color: #00d4aa; background: #00d4aa20; color: #00d4aa; }
+        .problem-btn .icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+        
+        .result { background: #252540; border-radius: 10px; padding: 16px; margin-top: 12px; border: 1px solid #00d4aa40; }
+        .result h3 { color: #ffdd57; font-size: 1rem; margin-bottom: 10px; }
+        .result p { color: #ddd; font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px; }
+        .result .match-score { color: #00d4aa; font-weight: 600; margin-bottom: 10px; }
+        
+        .feature-list { list-style: none; margin-top: 12px; }
+        .feature-list li { padding: 8px 0; padding-left: 20px; position: relative; color: #ccc; font-size: 0.9rem; border-bottom: 1px solid #333; }
+        .feature-list li:last-child { border-bottom: none; }
+        .feature-list li::before { content: "✓"; position: absolute; left: 0; color: #00d4aa; }
+        
+        .pitch-box { background: #1e1e2e; border: 1px solid #ff6b6b; border-radius: 10px; padding: 16px; margin-top: 16px; }
+        .pitch-box h4 { color: #ff6b6b; margin-bottom: 8px; font-size: 0.95rem; }
+        .pitch-box p { color: #ddd; font-size: 0.9rem; line-height: 1.5; font-style: italic; }
+        
+        .mattress-rec { background: #252540; border-radius: 10px; padding: 14px; margin-top: 12px; border-left: 3px solid #00d4aa; }
+        .mattress-rec .name { color: #00d4aa; font-weight: 600; font-size: 1rem; }
+        .mattress-rec .why { color: #888; font-size: 0.85rem; margin-top: 4px; }
+        
+        .clear-btn { background: #ff6b6b; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; width: 100%; margin-top: 10px; }
+        .clear-btn:hover { background: #ff5252; }
+        
+        .tip { background: #2a2a40; border-radius: 8px; padding: 12px; margin-top: 16px; }
+        .tip p { color: #bbb; font-size: 0.85rem; margin: 4px 0; }
+        .tip strong { color: #ffdd57; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>😴 Sleep Problem Matcher</h1>
+        <p class="subtitle">Match customer issues to perfect mattress solutions</p>
+        
+        <div class="card">
+            <h2>What does the customer struggle with?</h2>
+            <div class="problem-grid">
+                <button class="problem-btn" onclick="toggleProblem('back-pain', this)">
+                    <span class="icon">🦴</span>Back Pain
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('neck-pain', this)">
+                    <span class="icon">💆</span>Neck Pain
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('hot-sleeper', this)">
+                    <span class="icon">🔥</span>Hot Sleeping
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('partner-move', this)">
+                    <span class="icon">👫</span>Partner Movement
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('pressure-points', this)">
+                    <span class="icon">💪</span>Pressure Points
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('sinkage', this)">
+                    <span class="icon">⬇️</span>Too Soft/Hard
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('allergies', this)">
+                    <span class="icon">🤧</span>Allergies
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('durability', this)">
+                    <span class="icon">⏰</span>Wears Out Fast
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('motion-transfer', this)">
+                    <span class="icon">🌊</span>Motion Transfer
+                </button>
+                <button class="problem-btn" onclick="toggleProblem('edge-support', this)">
+                    <span class="icon">🪑</span>Falls Off Edge
+                </button>
+            </div>
+            <button class="clear-btn" onclick="clearSelections()">Clear All</button>
+        </div>
+        
+        <div id="results"></div>
+        
+        <div class="tip">
+            <p><strong>💡 Pro Tip:</strong> Ask "How's your sleep?" then follow up with "Any back pain? Sleep hot? Partner disturb you?"</p>
+            <p><strong>🎯 Match:</strong> Each problem has recommended mattress types and key features to highlight</p>
+        </div>
+    </div>
+    
+    <script>
+        const selected = new Set();
+        
+        const solutions = {
+            'back-pain': {
+                name: "Back Pain",
+                score: "95% match",
+                description: "Back pain requires proper spinal alignment and support. The key is a mattress that keeps the spine neutral while relieving pressure on the lower back.",
+                features: [
+                    "Medium-firm to firm support",
+                    "Lumbar support zones",
+                    "Memory foam or hybrid construction",
+                    "Proper spinal alignment",
+                    "Minimal sinkage"
+                ],
+                mattress: "Serta iComfort CF 3000 or Tempur-Pedic Adapt",
+                why: "These offer targeted lumbar support with pressure relief — the gold standard for back pain relief.",
+                pitch: "\"I see you deal with back pain — that's actually why a lot of people come in. The key is keeping your spine aligned while taking pressure off your lower back. This mattress has specific lumbar support zones that do exactly that. Most of our back-pain customers swear by it.\""
+            },
+            'neck-pain': {
+                name: "Neck Pain",
+                score: "92% match",
+                description: "Neck pain needs proper head and shoulder support. The right pillow matters too, but the mattress must allow proper spinal alignment from head to toe.",
+                features: [
+                    "Medium feel",
+                    "Contouring foam",
+                    "Adjustable base compatible",
+                    "Good cervical support",
+                    "Low pillow needed"
+                ],
+                mattress: "Tempur-Pedic ProAdapt or Stearns & Foster Estate",
+                why: "These contour to the head and shoulders while maintaining spinal alignment — essential for neck pain relief.",
+                pitch: "\"Neck pain is often from improper support. This mattress works with your pillow rather than against it — gives your head and neck the right alignment. Combined with the right pillow height, it's a game-changer.\""
+            },
+            'hot-sleeper': {
+                name: "Hot Sleeping",
+                score: "98% match",
+                description: "Hot sleepers need breathable materials and cooling technology. Traditional memory foam traps heat — look for cooling gels, open-cell foam, or innerspring.",
+                features: [
+                    "Cooling gel foam",
+                    "Phase-change material",
+                    "Open-cell foam structure",
+                    "Innerspring coil system",
+                    "Breathable cover"
+                ],
+                mattress: "Purple Restore or Serta iComfort CF 3000",
+                why: "The Purple grid and cooling gel technology actively dissipate heat — our coolest sleeping options.",
+                pitch: "\"Hot sleep? That's a huge complaint with traditional mattresses — they trap body heat. This one has actual cooling technology built in. The gel and open-cell structure let air flow through. Customers who sleep hot say it's like night and day.\""
+            },
+            'partner-move': {
+                name: "Partner Movement",
+                score: "96% match",
+                description: "If one partner disturbs the other, you need excellent motion isolation. This typically means foam or hybrid construction with individually wrapped coils.",
+                features: [
+                    "Individually wrapped coils",
+                    "Memory foam layers",
+                    "Minimal motion transfer",
+                    "Edge-to-edge support",
+                    "Zero-gravity feel"
+                ],
+                mattress: "GhostBed Flex or Purple Max",
+                why: "Individually wrapped coils absorb motion at the source — partner can move without disturbing you.",
+                pitch: "\"Partner movement is one of the most common complaints we hear. This mattress has individually wrapped coils that absorb motion — your partner could jump on their side and you wouldn't feel it on yours. It's a game-changer for couples.\""
+            },
+            'pressure-points': {
+                name: "Pressure Points",
+                score: "94% match",
+                description: "Pressure points (shoulders, hips) cause tossing and turning. Soft, contouring materials like memory foam and the Purple grid distribute weight evenly.",
+                features: [
+                    "Contouring memory foam",
+                    "Soft comfort layers",
+                    "Pressure-relieving foams",
+                    "Zoned support",
+                    "Gel or latex layers"
+                ],
+                mattress: "Purple RestoreMax or GhostBed 11.5\"",
+                why: "The Purple grid and thick comfort layers distribute pressure evenly across shoulders and hips.",
+                pitch: "\"Pressure points are what make you toss and turn at night. This mattress has special pressure-relieving layers that distribute your weight evenly — no more waking up with a sore hip or shoulder. It's like being hugged all night.\""
+            },
+            'sinkage': {
+                name: "Too Soft/Hard",
+                score: "90% match",
+                description: "Finding the right firmness is key. Too soft causes sinkage and pain; too firm creates pressure points. Most people do well with medium.",
+                features: [
+                    "Medium firmness",
+                    "Responsive foam layers",
+                    "Balanced support",
+                    "Edge support",
+                    "Multiple firmness options"
+                ],
+                mattress: "Serta Perfect Sleeper (multiple firmnesses)",
+                why: "Multiple firmness options let you find the perfect balance — our most customizable line.",
+                pitch: "\"Finding the right firmness is personal. This mattress comes in multiple firmnesses so we can find YOUR perfect feel — not too soft, not too firm. Most people think they want firm but actually do better with medium.\""
+            },
+            'allergies': {
+                name: "Allergies",
+                score: "88% match",
+                description: "Allergy sufferers need hypoallergenic materials, dust-mite resistance, and antimicrobial properties. Avoid traditional innersprings that trap allergens.",
+                features: [
+                    "Antimicrobial cover",
+                    "Dust-mite resistant",
+                    "Hypoallergenic foams",
+                    "Washable cover",
+                    "Sealized construction"
+                ],
+                mattress: "Purple Restore or GhostBed (sealed foam)",
+                why: "Foam beds don't have the same allergen traps as traditional mattresses — dust mites can't live in them.",
+                pitch: "\"Allergies and mattresses are a real issue — dust mites love old mattresses. These are made with antimicrobial, hypoallergenic materials that dust mites can't live in. The covers are even washable. It's a huge difference for allergy sufferers.\""
+            },
+            'durability': {
+                name: "Wears Out Fast",
+                score: "85% match",
+                description: "Mattresses that wear out quickly usually lack quality materials. Look for high-density foams, durable coils, and long warranties.",
+                features: [
+                    "High-density foams (2+ lb)",
+                    "Durable coil systems",
+                    "10+ year warranty",
+                    "Quality construction",
+                    "Edge reinforcement"
+                ],
+                mattress: "Stearns & Foster Estate or Tempur-Pedic",
+                why: "These use premium materials and construction — rated for 10+ years of comfortable use.",
+                pitch: "\"If your last mattress wore out fast, it was probably lower-quality materials. These use high-density foams and premium coils rated for 10+ years. The warranty alone tells you — they stand behind it.\""
+            },
+            'motion-transfer': {
+                name: "Motion Transfer",
+                score: "97% match",
+                description: "Same as partner movement — need excellent motion isolation to prevent feeling every movement across the bed.",
+                features: [
+                    "Memory foam construction",
+                    "Individually wrapped coils",
+                    "Low-motion transfer",
+                    "Heavy, stable feel",
+                    "Minimal bounce"
+                ],
+                mattress: "GhostBed Flex or Purple Max",
+                why: "Premium motion isolation — the gold standard for couples who don't want to feel each other.",
+                pitch: "\"Motion transfer is basically feeling your partner move across the bed. This mattress isolates motion so well — you simply won't feel it. It's one of our best for couples.\""
+            },
+            'edge-support': {
+                name: "Edge Support",
+                score: "91% match",
+                description: "Falling off the edge or feeling like you're rolling off means weak edge support. Look for reinforced edges, firmer perimeter, or innerspring edge systems.",
+                features: [
+                    "Reinforced edge coils",
+                    "Firm perimeter foam",
+                    "Edge-to-edge sleeping",
+                    "No roll-off feeling",
+                    "Sit-on-edge capability"
+                ],
+                mattress: "Stearns & Foster or Beautyrest Black",
+                why: "These have reinforced edges — you can sleep all the way to the edge without feeling like you'll roll off.",
+                pitch: "\"Edge support is underrated until you fall off or feel like you're rolling out. These have reinforced edges — you can actually sit on the edge or sleep all the way to the side without that 'falling off' feeling.\""
+            }
+        };
+        
+        function toggleProblem(problem, btn) {
+            if (selected.has(problem)) {
+                selected.delete(problem);
+                btn.classList.remove('selected');
+            } else {
+                selected.add(problem);
+                btn.classList.add('selected');
+            }
+            updateResults();
+        }
+        
+        function clearSelections() {
+            selected.clear();
+            document.querySelectorAll('.problem-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        function updateResults() {
+            const container = document.getElementById('results');
+            
+            if (selected.size === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            selected.forEach(problem => {
+                const s = solutions[problem];
+                if (!s) return;
+                
+                html += `
+                    <div class="card">
+                        <h2>${s.name} Solution</h2>
+                        <div class="result">
+                            <div class="match-score">${s.score}</div>
+                            <p>${s.description}</p>
+                            
+                            <h3>Key Features to Highlight:</h3>
+                            <ul class="feature-list">
+                                ${s.features.map(f => `<li>${f}</li>`).join('')}
+                            </ul>
+                            
+                            <div class="mattress-rec">
+                                <div class="name">Recommended: ${s.mattress}</div>
+                                <div class="why">${s.why}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="pitch-box">
+                            <h4>🎯 Your Pitch:</h4>
+                            <p>"${s.pitch}"</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
