@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trial Close Triggers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); }
+    .card-gradient { background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); }
+    .trigger-btn.selected { border-color: #3b82f6; background: #eff6ff; }
+  </style>
+</head>
+<body class="min-h-screen gradient-bg text-slate-800">
+  <div class="max-w-md mx-auto p-4 min-h-screen">
+    <!-- Header -->
+    <div class="text-center py-4">
+      <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-full mb-3">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+        </svg>
+      </div>
+      <h1 class="text-xl font-bold text-white">Trial Close Triggers</h1>
+      <p class="text-blue-200 text-xs mt-1">Gauge interest → Choose your close</p>
+    </div>
+
+    <!-- Interest Gauge -->
+    <div class="card-gradient rounded-2xl p-5 shadow-xl mb-4">
+      <h2 class="font-semibold text-base mb-3 flex items-center gap-2">
+        <span class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">1</span>
+        How interested are they?
+      </h2>
+      
+      <div class="space-y-2">
+        <button onclick="selectInterest('hot')" class="trigger-btn w-full p-3 rounded-xl border-2 border-slate-200 text-left hover:border-blue-300 transition" data-interest="hot">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🔥</span>
+            <div>
+              <p class="font-semibold text-slate-800">HOT — Ready to buy today</p>
+              <p class="text-xs text-slate-500">"This is exactly what I need"</p>
+            </div>
+          </div>
+        </button>
+        
+        <button onclick="selectInterest('warm')" class="trigger-btn w-full p-3 rounded-xl border-2 border-slate-200 text-left hover:border-blue-300 transition" data-interest="warm">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🌡️</span>
+            <div>
+              <p class="font-semibold text-slate-800">WARM — Needs a push</p>
+              <p class="text-xs text-slate-500">"I like it but..."</p>
+            </div>
+          </div>
+        </button>
+        
+        <button onclick="selectInterest('cool')" class="trigger-btn w-full p-3 rounded-xl border-2 border-slate-200 text-left hover:border-blue-300 transition" data-interest="cool">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">❄️</span>
+            <div>
+              <p class="font-semibold text-slate-800">COOL — Just browsing</p>
+              <p class="text-xs text-slate-500">"I'm just looking"</p>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Trigger Questions -->
+    <div id="triggerSection" class="card-gradient rounded-2xl p-5 shadow-xl mb-4 hidden">
+      <h2 class="font-semibold text-base mb-3 flex items-center gap-2">
+        <span class="w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm">2</span>
+        Ask These Questions
+      </h2>
+      
+      <div id="triggerQuestions" class="space-y-3">
+        <!-- Questions inserted by JS -->
+      </div>
+    </div>
+
+    <!-- Close Technique -->
+    <div id="closeSection" class="card-gradient rounded-2xl p-5 shadow-xl mb-4 hidden">
+      <h2 class="font-semibold text-base mb-3 flex items-center gap-2">
+        <span class="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-sm">3</span>
+        Use This Close
+      </h2>
+      
+      <div id="closeTechnique" class="space-y-3">
+        <!-- Close technique inserted by JS -->
+      </div>
+    </div>
+
+    <!-- Quick Closes Reference -->
+    <div class="card-gradient rounded-2xl p-5 shadow-xl">
+      <h2 class="font-semibold text-base mb-3">📋 Quick Close Library</h2>
+      
+      <div class="space-y-3 text-sm">
+        <div class="bg-amber-50 rounded-xl p-3">
+          <p class="font-semibold text-amber-800">🤝 The Assumption Close</p>
+          <p class="text-amber-700">"Should I get the Queen or King for you?"</p>
+        </div>
+        
+        <div class="bg-blue-50 rounded-xl p-3">
+          <p class="font-semibold text-blue-800">⏰ The Urgency Close</p>
+          <p class="text-blue-700">"This delivery slot goes fast — want to secure it?"</p>
+        </div>
+        
+        <div class="bg-green-50 rounded-xl p-3">
+          <p class="font-semibold text-green-800">💰 The Investment Close</p>
+          <p class="text-green-700">"You're investing in X nights of great sleep. That's just $X/night."</p>
+        </div>
+        
+        <div class="bg-purple-50 rounded-xl p-3">
+          <p class="font-semibold text-purple-800">😌 The Risk Reversal Close</p>
+          <p class="text-purple-700">"100 nights to decide. If you don't love it, I'll help you exchange."</p>
+        </div>
+        
+        <div class="bg-rose-50 rounded-xl p-3">
+          <p class="font-semibold text-rose-800">🏆 The Status Close</p>
+          <p class="text-rose-700">"You're getting the same mattress top performers recommend."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center py-4">
+      <p class="text-blue-200 text-xs">Built for Josh - #1 Sleep Expert 🚀</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedInterest = null;
+
+    const triggerData = {
+      hot: {
+        questions: [
+          "✅ \"Which mattress feels the best to you?\" → If they point, they're committed",
+          "✅ \"Do you want the protection plan added?\" → Tests willingness to add-ons",
+          "✅ \"Thursday or Saturday delivery?\" → Assumes the sale, offers choice",
+          "✅ \"Should I start the paperwork?\" → Direct close"
+        ],
+        closes: [
+          {
+            name: "⚡ The Fast Close",
+            script: "You know what you want. Let me get the paperwork started — we'll have this delivered by Thursday.",
+            when: "Customer is ready, don't delay"
+          },
+          {
+            name: "🎁 The Add-On Close",
+            script: "Great choice. Now let's add the protector — it's what smart buyers do. And while you're at it...",
+            when: "Maximize the sale when they're hot"
+          }
+        ]
+      },
+      warm: {
+        questions: [
+          "🤔 \"What do you like most about that one?\" → Get them to verbalize value",
+          "🤔 \"Is there anything holding you back?\" → Identify objection",
+          "🤔 \"If you could change one thing, what would it be?\" → Find the hesitation",
+          "🤔 \"On a scale of 1-10, how ready are you?\" → If 7+, push for 10"
+        ],
+        closes: [
+          {
+            name: "🌡️ The Feel-Felt-Found Close",
+            script: "I understand how you feel. Other customers felt the same way, but they found that the [benefit] was worth it. You will too.",
+            when: "Price or timing objections"
+          },
+          {
+            name: "🔄 The Trade-Off Close",
+            script: "So you're saying you'd rather have [lesser option] than invest in better sleep? Let me show you the difference...",
+            when: "They're comparing downgrading"
+          },
+          {
+            name: "💳 The Financing Close",
+            script: "At $X/month, that's just $X/day. Less than a coffee. Can you really afford NOT to sleep better?",
+            when: "Price objection, have financing available"
+          }
+        ]
+      },
+      cool: {
+        questions: [
+          "❄️ \"What brings you in today?\" → Open-ended, don't assume",
+          "❄️ \"What's your sleep situation currently?\" → Build rapport first",
+          "❄️ \"Any specific issues you're hoping to solve?\" → Find pain points",
+          "❄️ \"Have you tried anything else?\" → Understand their history"
+        ],
+        closes: [
+          {
+            name: "🎯 The Problem放大 Close",
+            script: "You mentioned [pain point]. This mattress solves that. Want to lie down and see the difference?",
+            when: "Found a pain point to exploit"
+          },
+          {
+            name: "🧪 The Try-It Close",
+            script: "No pressure — just 10 minutes on different mattresses. What do you say?",
+            when: "Need to build engagement first"
+          },
+          {
+            name: "📞 The Information Close",
+            script: "Take my card. When you're ready, text me — I'll answer any questions. No hassle.",
+            when: "They won't commit today"
+          }
+        ]
+      }
+    };
+
+    function selectInterest(level) {
+      selectedInterest = level;
+      
+      // Update button styles
+      document.querySelectorAll('.trigger-btn').forEach(btn => {
+        if (btn.dataset.interest === level) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+
+      // Show trigger questions
+      const triggerSection = document.getElementById('triggerSection');
+      const triggerQuestions = document.getElementById('triggerQuestions');
+      triggerSection.classList.remove('hidden');
+      
+      const data = triggerData[level];
+      triggerQuestions.innerHTML = data.questions.map(q => 
+        `<div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-700">${q}</div>`
+      ).join('');
+
+      // Show close technique
+      const closeSection = document.getElementById('closeSection');
+      const closeTechnique = document.getElementById('closeTechnique');
+      closeSection.classList.remove('hidden');
+      
+      closeTechnique.innerHTML = data.closes.map(c => `
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+          <p class="font-semibold text-green-800 mb-1">${c.name}</p>
+          <p class="text-sm text-green-700 italic mb-2">"${c.script}"</p>
+          <p class="text-xs text-green-600"><strong>Use when:</strong> ${c.when}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
